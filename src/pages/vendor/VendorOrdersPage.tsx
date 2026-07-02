@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import { ordersApi } from "@/api/orders";
 import type { Order, OrderItem } from "@/types";
 import Spinner from "@/components/ui/Spinner";
