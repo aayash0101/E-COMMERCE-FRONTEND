@@ -29,4 +29,20 @@ export const vendorsApi = {
     );
     return response.data.data.vendorProfile;
   },
+  approve: async (vendorProfileId: string): Promise<VendorProfile> => {
+    const response = await api.put<ApiResponse<{ vendorProfile: VendorProfile }>>(
+      `/vendors/${vendorProfileId}/approve`
+    );
+    return response.data.data.vendorProfile;
+  },
+  reject: async (
+    vendorProfileId: string,
+    reason: string
+  ): Promise<VendorProfile> => {
+    const response = await api.put<ApiResponse<{ vendorProfile: VendorProfile }>>(
+      `/vendors/${vendorProfileId}/reject`,
+      { reason }
+    );
+    return response.data.data.vendorProfile;
+  },
 };
