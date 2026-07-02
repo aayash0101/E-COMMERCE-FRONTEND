@@ -26,4 +26,22 @@ export const ordersApi = {
     );
     return response.data.data.order;
   },
+  getVendorOrders: async (): Promise<Order[]> => {
+    const response = await api.get<ApiResponse<{ orders: Order[] }>>(
+      "/orders/vendor/mine"
+    );
+    return response.data.data.orders;
+  },
+  updateItemStatus: async (
+    orderId: string,
+    itemId: string,
+    status: "shipped" | "delivered" | "cancelled"
+  ): Promise<Order> => {
+    const response = await api.put<ApiResponse<{ order: Order }>>(
+      `/orders/${orderId}/items/${itemId}`,
+      { status }
+    );
+    return response.data.data.order;
+  },
 };
+
