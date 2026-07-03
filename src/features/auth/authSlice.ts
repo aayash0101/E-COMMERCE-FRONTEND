@@ -7,6 +7,7 @@ interface AuthState {
   accessToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   error: string | null;
 }
 
@@ -15,6 +16,7 @@ const initialState: AuthState = {
   accessToken: null,
   isLoading: false,
   isAuthenticated: false,
+  isInitialized: false,
   error: null,
 };
 
@@ -123,15 +125,25 @@ const authSlice = createSlice({
       setAccessToken(null);
     });
 
-    // Refresh
-    builder.addCase(
-      refreshAuth.fulfilled,
-      (state, action: PayloadAction<{ accessToken: string }>) => {
-        state.accessToken = action.payload.accessToken;
-        state.isAuthenticated = true;
-        setAccessToken(action.payload.accessToken);
-      }
-    );
+    // Refresh (silent session restore on app load)
+    builder
+      .addCase(
+        refreshAuth.fulfilled,
+        (state, action: PayloadAction<{ accessToken: string; user: User }>) => {
+          state.accessToken = action.payload.accessToken;
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
+          state.isInitialized = true;
+          setAccessToken(action.payload.accessToken);
+        }
+      )
+      .addCase(refreshAuth.rejected, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
+        state.isInitialized = true;
+        setAccessToken(null);
+      });
   },
 });
 
