@@ -42,7 +42,7 @@ const ProductListPage = () => {
             })
             .then((result) => {
                 if (!active) return;
-                setProducts(result.data);
+                setProducts(result.products);
                 setMeta(result.meta);
             })
             .finally(() => {

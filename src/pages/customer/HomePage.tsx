@@ -15,7 +15,7 @@ const HomePage = () => {
         productsApi
             .list({ limit: 8, sortBy: "-createdAt" })
             .then((result) => {
-                if (active) setProducts(result.data);
+                if (active) setProducts(result.products);
             })
             .finally(() => {
                 if (active) setIsLoading(false);

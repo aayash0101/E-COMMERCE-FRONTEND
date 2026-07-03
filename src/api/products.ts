@@ -14,7 +14,7 @@ export interface ProductListParams {
 }
 
 export interface ProductListResult {
-  data: Product[];
+  products: Product[];
   meta: PaginationMeta;
 }
 
