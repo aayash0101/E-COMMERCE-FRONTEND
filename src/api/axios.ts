@@ -58,11 +58,20 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't attempt token refresh for auth endpoints — a 401 here means
+    // wrong credentials or an already-invalid refresh token, not an
+    // expired access token that needs silent renewal.
+    const isAuthEndpoint =
+      originalRequest.url?.includes('/auth/login') ||
+      originalRequest.url?.includes('/auth/register') ||
+      originalRequest.url?.includes('/auth/refresh');
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint
+    ) {
       if (isRefreshing) {
-        // If a refresh is already in progress, queue this request
-        // until the refresh completes rather than firing multiple
-        // simultaneous refresh calls.
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then((token) => {
@@ -70,10 +79,8 @@ api.interceptors.response.use(
           return api(originalRequest);
         });
       }
-
       originalRequest._retry = true;
       isRefreshing = true;
-
       try {
         const { data } = await api.post('/auth/refresh');
         const newToken = data.data.accessToken;
@@ -84,14 +91,12 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         setAccessToken(null);
-        // Refresh failed — token is truly expired, redirect to login
         window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );
