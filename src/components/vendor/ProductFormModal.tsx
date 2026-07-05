@@ -4,6 +4,7 @@ import { productsApi, type ProductFormFields } from "@/api/products";
 import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { categoriesApi, type CategoryOption } from "@/api/categories";
 
 interface ProductFormModalProps {
   open: boolean;
@@ -33,6 +34,7 @@ const ProductFormModal = ({
   const [images, setImages] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
 
   useEffect(() => {
     if (product) {
@@ -51,6 +53,9 @@ const ProductFormModal = ({
     setImages([]);
     setError(null);
   }, [product, open]);
+  useEffect(() => {
+    categoriesApi.list().then(setCategories).catch(() => setCategories([]));
+  }, []);
 
   const updateField = <K extends keyof ProductFormFields>(
     field: K,
@@ -140,12 +145,23 @@ const ProductFormModal = ({
           />
         </div>
 
-        <Input
-          label="Category ID"
-          value={form.categoryId}
-          onChange={(e) => updateField("categoryId", e.target.value)}
-          hint="Temporary: paste the category's Mongo ID until a category picker endpoint exists."
-        />
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            value={form.categoryId}
+            onChange={(e) => updateField("categoryId", e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+          >
+            <option value="">Select a category…</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {isEdit && (
           <div>
