@@ -41,7 +41,11 @@ const VendorOrdersPage = () => {
   ) => {
     setUpdatingItemId(itemId);
     try {
-      const updated = await ordersApi.updateItemStatus(orderId, itemId, status as "shipped" | "delivered" | "cancelled");
+      const updated = await ordersApi.updateItemStatus(
+        orderId,
+        itemId,
+        status as "shipped" | "delivered" | "cancelled"
+      );
       setOrders((prev) =>
         prev.map((o) => (o.id === updated.id ? updated : o))
       );
@@ -60,7 +64,9 @@ const VendorOrdersPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+        Orders
+      </h1>
 
       {orders.length === 0 ? (
         <p className="mt-12 text-center text-sm text-gray-500">
@@ -71,7 +77,7 @@ const VendorOrdersPage = () => {
           {orders.map((order) => (
             <div
               key={order.id}
-              className="rounded-xl border border-gray-200 p-4"
+              className="rounded-2xl border border-gray-100 p-4"
             >
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span>Order #{order.id.slice(-8).toUpperCase()}</span>

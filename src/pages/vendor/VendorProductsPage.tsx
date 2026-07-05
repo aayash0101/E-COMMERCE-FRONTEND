@@ -45,7 +45,9 @@ const VendorProductsPage = () => {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">My Products</h1>
+        <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+          My Products
+        </h1>
         <Button
           onClick={() => {
             setEditingProduct(null);
@@ -65,7 +67,7 @@ const VendorProductsPage = () => {
           You haven't listed any products yet.
         </p>
       ) : (
-        <div className="mt-6 overflow-hidden rounded-xl border border-gray-200">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs font-medium uppercase tracking-wide text-gray-500">
               <tr>

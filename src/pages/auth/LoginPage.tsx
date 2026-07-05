@@ -46,11 +46,11 @@ const LoginPage = () => {
       {/* Form column */}
       <div className="flex w-full flex-col justify-center px-6 py-12 sm:w-1/2 sm:px-12 lg:px-20">
         <div className="mx-auto w-full max-w-sm">
-          <Link to="/" className="text-2xl font-bold text-primary-600">
+          <Link to="/" className="font-display text-2xl font-bold tracking-tight text-ink">
             Marketplace
           </Link>
 
-          <h1 className="mt-8 text-2xl font-semibold text-gray-900">
+          <h1 className="mt-8 font-display text-3xl font-bold tracking-tight text-ink">
             Welcome back
           </h1>
           <p className="mt-2 text-sm text-gray-500">
@@ -71,7 +71,7 @@ const LoginPage = () => {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10"
                 placeholder="you@example.com"
               />
             </div>
@@ -97,7 +97,7 @@ const LoginPage = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10"
                 placeholder="••••••••"
               />
             </div>
@@ -111,7 +111,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-full bg-ink px-4 py-3 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isLoading ? "Signing in…" : "Sign in"}
             </button>
@@ -130,14 +130,14 @@ const LoginPage = () => {
       </div>
 
       {/* Brand column */}
-      <div className="hidden bg-primary-600 sm:flex sm:w-1/2 sm:items-center sm:justify-center">
+      <div className="hidden bg-ink sm:flex sm:w-1/2 sm:items-center sm:justify-center">
         <div className="max-w-md px-12 text-white">
-          <h2 className="text-3xl font-bold leading-tight">
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-tight">
             One marketplace, thousands of sellers.
           </h2>
-          <p className="mt-4 text-primary-100">
+          <p className="mt-4 text-gray-300">
             Buy from independent vendors, or sign in to manage your own
-            storefront - orders, inventory, and revenue, all in one place.
+            storefront — orders, inventory, and revenue, all in one place.
           </p>
         </div>
       </div>

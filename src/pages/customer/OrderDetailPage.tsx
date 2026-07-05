@@ -16,12 +16,23 @@ const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
     ordersApi
       .getOrderById(id)
       .then(setOrder)
+      .catch((err: unknown) => {
+        const e = err as { response?: { status?: number; data?: { message?: string } } };
+        if (e.response?.status === 403) {
+          setErrorMessage("You don't have access to this order.");
+        } else if (e.response?.status === 404) {
+          setErrorMessage("Order not found.");
+        } else {
+          setErrorMessage(e.response?.data?.message ?? "Failed to load order.");
+        }
+      })
       .finally(() => setIsLoading(false));
   }, [id]);
 
@@ -33,17 +44,17 @@ const OrderDetailPage = () => {
     );
   }
 
-  if (!order) {
+  if (errorMessage || !order) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
-        <p className="text-sm text-gray-500">Order not found.</p>
+        <p className="text-sm text-gray-500">{errorMessage ?? "Order not found."}</p>
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
         Order #{order.id.slice(-8).toUpperCase()}
       </h1>
       <p className="mt-1 text-sm text-gray-500">
@@ -55,7 +66,7 @@ const OrderDetailPage = () => {
           {order.items.map((item) => (
             <div
               key={item._id}
-              className="flex items-center gap-4 rounded-xl border border-gray-200 p-4"
+              className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4"
             >
               <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
                 {item.productId?.images?.[0] && (
@@ -84,8 +95,8 @@ const OrderDetailPage = () => {
         </div>
 
         <div className="space-y-5">
-          <div className="rounded-xl border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold text-gray-900">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
               Shipping Address
             </h2>
             <p className="mt-2 text-sm text-gray-600">
@@ -107,8 +118,10 @@ const OrderDetailPage = () => {
             </p>
           </div>
 
-          <div className="rounded-xl border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold text-gray-900">Payment</h2>
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              Payment
+            </h2>
             <div className="mt-2 flex justify-between text-sm text-gray-600">
               <span>Method</span>
               <span className="capitalize">

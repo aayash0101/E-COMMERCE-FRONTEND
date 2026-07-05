@@ -5,17 +5,19 @@ import Spinner from "@/components/ui/Spinner";
 const StatCard = ({
   label,
   value,
-  accent = "text-gray-900",
+  accent = "text-ink",
 }: {
   label: string;
   value: string;
   accent?: string;
 }) => (
-  <div className="rounded-xl border border-gray-200 p-5">
-    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+  <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-5">
+    <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
       {label}
     </p>
-    <p className={`mt-2 text-2xl font-semibold ${accent}`}>{value}</p>
+    <p className={`mt-2 font-display text-2xl font-bold tracking-tight ${accent}`}>
+      {value}
+    </p>
   </div>
 );
 
@@ -50,7 +52,7 @@ const AdminDashboardPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
         Admin Dashboard
       </h1>
 
@@ -66,9 +68,9 @@ const AdminDashboardPage = () => {
         />
       </div>
 
-      <div className="mt-8 rounded-xl border border-gray-200 p-5">
-        <h2 className="text-sm font-semibold text-gray-900">
-          Revenue - Last 6 Months
+      <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+          Revenue — Last 6 Months
         </h2>
         {revenue.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">
@@ -85,7 +87,7 @@ const AdminDashboardPage = () => {
                   ${r.revenue.toFixed(0)}
                 </span>
                 <div
-                  className="w-full rounded-t-md bg-primary-500"
+                  className="w-full rounded-t-md bg-ink"
                   style={{
                     height: `${Math.max((r.revenue / maxRevenue) * 140, 4)}px`,
                   }}

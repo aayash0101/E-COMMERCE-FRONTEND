@@ -76,7 +76,7 @@ const ProductDetailPage = () => {
       <div className="grid gap-10 lg:grid-cols-2">
         {/* Gallery */}
         <div>
-          <div className="aspect-square overflow-hidden rounded-xl bg-gray-100">
+          <div className="aspect-square overflow-hidden rounded-2xl bg-gray-50">
             {product.images[activeImage] ? (
               <img
                 src={getImageUrl(product.images[activeImage])}
@@ -115,7 +115,7 @@ const ProductDetailPage = () => {
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
             {product.categoryId?.name}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold text-gray-900">
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">
             {product.name}
           </h1>
 
@@ -128,7 +128,7 @@ const ProductDetailPage = () => {
             </div>
           )}
 
-          <p className="mt-4 text-3xl font-bold text-gray-900">
+          <p className="mt-4 font-display text-4xl font-bold tracking-tight text-ink">
             ${product.price.toFixed(2)}
           </p>
 
@@ -144,7 +144,7 @@ const ProductDetailPage = () => {
 
           {canAddToCart && (
             <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center rounded-lg border border-gray-300">
+              <div className="flex items-center rounded-full border border-gray-200">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   className="px-3 py-2 text-gray-600 hover:bg-gray-50"

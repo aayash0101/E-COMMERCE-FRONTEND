@@ -87,11 +87,13 @@ const CheckoutPage = () => {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Checkout</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+        Checkout
+      </h1>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-3">
         <form onSubmit={handleSubmit} className="space-y-5 lg:col-span-2">
-          <h2 className="text-sm font-semibold text-gray-900">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
             Shipping Address
           </h2>
 
@@ -147,7 +149,7 @@ const CheckoutPage = () => {
               ).map((option) => (
                 <label
                   key={option.value}
-                  className="flex items-center gap-2.5 rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50"
+                  className="flex items-center gap-2.5 rounded-xl border border-gray-200 px-4 py-3 text-sm transition has-[:checked]:border-ink has-[:checked]:bg-gray-50"
                 >
                   <input
                     type="radio"
@@ -174,8 +176,10 @@ const CheckoutPage = () => {
         </form>
 
         {/* Summary */}
-        <div className="h-fit rounded-xl border border-gray-200 p-5">
-          <h2 className="text-sm font-semibold text-gray-900">Order Summary</h2>
+        <div className="h-fit rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+            Order Summary
+          </h2>
           <div className="mt-4 space-y-2">
             {cart.items.map((item) => (
               <div

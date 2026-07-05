@@ -32,14 +32,16 @@ const OrderHistoryPage = () => {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">My Orders</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+        My Orders
+      </h1>
 
       {orders.length === 0 ? (
         <p className="mt-12 text-center text-sm text-gray-500">
           You haven't placed any orders yet.
         </p>
       ) : (
-        <div className="mt-6 divide-y divide-gray-200 rounded-xl border border-gray-200">
+        <div className="mt-6 divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-100">
           {orders.map((order) => (
             <Link
               key={order.id}
@@ -58,7 +60,7 @@ const OrderHistoryPage = () => {
               </div>
               <div className="flex items-center gap-4">
                 <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusColors[order.paymentStatus]}`}
+                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusColors[order.paymentStatus]}`}
                 >
                   {order.paymentStatus}
                 </span>

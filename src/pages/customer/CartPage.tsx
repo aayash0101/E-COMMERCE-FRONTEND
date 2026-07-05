@@ -42,12 +42,14 @@ const CartPage = () => {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">Your Cart</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+        Your Cart
+      </h1>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-3">
         {/* Items */}
         <div className="lg:col-span-2">
-          <div className="divide-y divide-gray-200 rounded-xl border border-gray-200">
+          <div className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-100">
             {cart.items.map((item) => (
               <div key={item.product.id} className="flex gap-4 p-4">
                 <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -81,7 +83,7 @@ const CartPage = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center rounded-lg border border-gray-300">
+                    <div className="flex items-center rounded-full border border-gray-200">
                       <button
                         disabled={item.quantity <= 1}
                         onClick={() =>
@@ -125,8 +127,10 @@ const CartPage = () => {
         </div>
 
         {/* Summary */}
-        <div className="h-fit rounded-xl border border-gray-200 p-5">
-          <h2 className="text-sm font-semibold text-gray-900">Order Summary</h2>
+        <div className="h-fit rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+            Order Summary
+          </h2>
           <div className="mt-4 flex justify-between text-sm text-gray-600">
             <span>Items ({cart.totalItems})</span>
             <span>${cart.totalAmount.toFixed(2)}</span>

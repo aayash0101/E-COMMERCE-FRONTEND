@@ -11,12 +11,14 @@ interface StatCardProps {
   accent?: string;
 }
 
-const StatCard = ({ label, value, accent = "text-gray-900" }: StatCardProps) => (
-  <div className="rounded-xl border border-gray-200 p-5">
-    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+const StatCard = ({ label, value, accent = "text-ink" }: StatCardProps) => (
+  <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-5">
+    <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
       {label}
     </p>
-    <p className={`mt-2 text-2xl font-semibold ${accent}`}>{value}</p>
+    <p className={`mt-2 font-display text-2xl font-bold tracking-tight ${accent}`}>
+      {value}
+    </p>
   </div>
 );
 
@@ -62,7 +64,7 @@ const VendorDashboardPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
         Vendor Dashboard
       </h1>
 
@@ -81,12 +83,12 @@ const VendorDashboardPage = () => {
         <StatCard
           label="Out of Stock"
           value={String(outOfStockCount)}
-          accent={outOfStockCount > 0 ? "text-red-600" : "text-gray-900"}
+          accent={outOfStockCount > 0 ? "text-red-600" : "text-ink"}
         />
       </div>
 
       {lowStockProducts.length > 0 && (
-        <div className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-medium text-amber-800">
             {lowStockProducts.length} product
             {lowStockProducts.length !== 1 ? "s" : ""} running low on stock
@@ -94,7 +96,7 @@ const VendorDashboardPage = () => {
           <ul className="mt-2 space-y-1">
             {lowStockProducts.map((p) => (
               <li key={p.id} className="text-sm text-amber-700">
-                {p.name} - {p.stock} left
+                {p.name} — {p.stock} left
               </li>
             ))}
           </ul>
@@ -104,13 +106,13 @@ const VendorDashboardPage = () => {
       <div className="mt-8 flex gap-3">
         <Link
           to="/vendor/products"
-          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-700"
+          className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black"
         >
           Manage Products
         </Link>
         <Link
           to="/vendor/orders"
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+          className="rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-gray-50"
         >
           View Orders
         </Link>

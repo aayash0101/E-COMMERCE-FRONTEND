@@ -14,6 +14,11 @@ export default {
           600: '#2563eb',
           700: '#1d4ed8',
         },
+        ink: '#0f1117',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Sora', 'system-ui', 'sans-serif'],
       },
     },
   },

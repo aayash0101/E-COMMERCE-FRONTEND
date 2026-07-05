@@ -54,7 +54,7 @@ const AdminVendorsPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
         Pending Vendor Applications
       </h1>
 
@@ -67,7 +67,7 @@ const AdminVendorsPage = () => {
           {vendors.map((vendor) => (
             <div
               key={vendor.id}
-              className="flex items-start justify-between rounded-xl border border-gray-200 p-5"
+              className="flex items-start justify-between rounded-2xl border border-gray-100 p-5"
             >
               <div>
                 <h2 className="text-sm font-semibold text-gray-900">
@@ -87,14 +87,14 @@ const AdminVendorsPage = () => {
                 <button
                   onClick={() => handleApprove(vendor.id)}
                   disabled={busyId === vendor.id}
-                  className="rounded-lg bg-green-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                  className="rounded-full bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
                 >
                   Approve
                 </button>
                 <button
                   onClick={() => handleReject(vendor.id)}
                   disabled={busyId === vendor.id}
-                  className="rounded-lg border border-red-300 px-3.5 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                  className="rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
                 >
                   Reject
                 </button>

@@ -45,7 +45,7 @@ const VendorApplyPage = () => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
-      <h1 className="text-2xl font-semibold text-gray-900">
+      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
         Become a Vendor
       </h1>
       <p className="mt-2 text-sm text-gray-500">
@@ -71,7 +71,7 @@ const VendorApplyPage = () => {
             rows={4}
             maxLength={1000}
             placeholder="What do you sell?"
-            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10"
           />
         </div>
 

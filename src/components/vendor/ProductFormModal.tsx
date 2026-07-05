@@ -1,10 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { Product } from "@/types";
 import { productsApi, type ProductFormFields } from "@/api/products";
+import { categoriesApi, type CategoryOption } from "@/api/categories";
 import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { categoriesApi, type CategoryOption } from "@/api/categories";
 
 interface ProductFormModalProps {
   open: boolean;
@@ -32,9 +32,13 @@ const ProductFormModal = ({
   const [form, setForm] = useState<ProductFormFields>(emptyForm);
   const [status, setStatus] = useState<"active" | "inactive">("active");
   const [images, setImages] = useState<File[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
+
+  useEffect(() => {
+    categoriesApi.list().then(setCategories).catch(() => setCategories([]));
+  }, []);
 
   useEffect(() => {
     if (product) {
@@ -53,9 +57,6 @@ const ProductFormModal = ({
     setImages([]);
     setError(null);
   }, [product, open]);
-  useEffect(() => {
-    categoriesApi.list().then(setCategories).catch(() => setCategories([]));
-  }, []);
 
   const updateField = <K extends keyof ProductFormFields>(
     field: K,
@@ -75,7 +76,7 @@ const ProductFormModal = ({
       form.stock < 0 ||
       !form.categoryId.trim()
     ) {
-      setError("Please check all fields - name (3+ chars), description (10+ chars), price > 0, category ID required.");
+      setError("Please check all fields — name (3+ chars), description (10+ chars), price > 0, category required.");
       return;
     }
 
@@ -123,7 +124,7 @@ const ProductFormModal = ({
             value={form.description}
             onChange={(e) => updateField("description", e.target.value)}
             rows={4}
-            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10"
           />
         </div>
 
@@ -152,7 +153,7 @@ const ProductFormModal = ({
           <select
             value={form.categoryId}
             onChange={(e) => updateField("categoryId", e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-ink/10"
           >
             <option value="">Select a category…</option>
             {categories.map((cat) => (
@@ -173,7 +174,7 @@ const ProductFormModal = ({
               onChange={(e) =>
                 setStatus(e.target.value as "active" | "inactive")
               }
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+              className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-ink/10"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -191,7 +192,7 @@ const ProductFormModal = ({
               accept="image/*"
               multiple
               onChange={(e) => setImages(Array.from(e.target.files ?? []))}
-              className="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary-100"
+              className="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-gray-200"
             />
           </div>
         )}
