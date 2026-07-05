@@ -55,8 +55,8 @@ const RegisterPage = () => {
             Start shopping in minutes.
           </h2>
           <p className="mt-4 text-primary-100">
-            Create your account to track orders, save favorites, and — when
-            you're ready — apply to sell your own products.
+            Create your account to track orders, save favorites, and when
+            you're ready - apply to sell your own products.
           </p>
         </div>
       </div>

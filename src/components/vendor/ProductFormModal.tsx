@@ -75,7 +75,7 @@ const ProductFormModal = ({
       form.stock < 0 ||
       !form.categoryId.trim()
     ) {
-      setError("Please check all fields — name (3+ chars), description (10+ chars), price > 0, category ID required.");
+      setError("Please check all fields - name (3+ chars), description (10+ chars), price > 0, category ID required.");
       return;
     }
 

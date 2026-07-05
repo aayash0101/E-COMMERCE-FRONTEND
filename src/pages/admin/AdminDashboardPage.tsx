@@ -68,7 +68,7 @@ const AdminDashboardPage = () => {
 
       <div className="mt-8 rounded-xl border border-gray-200 p-5">
         <h2 className="text-sm font-semibold text-gray-900">
-          Revenue — Last 6 Months
+          Revenue - Last 6 Months
         </h2>
         {revenue.length === 0 ? (
           <p className="mt-4 text-sm text-gray-500">
