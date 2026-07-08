@@ -11,7 +11,7 @@ const ProductListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [meta, setMeta] = useState<PaginationMeta | null>(null);
+  const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const search = searchParams.get("search") ?? "";
@@ -38,7 +38,7 @@ const ProductListPage = () => {
       .then((result) => {
         if (!active) return;
         setProducts(result.products);
-        setMeta(result.meta);
+        setPagination(result.pagination);
       })
       .finally(() => {
         if (active) setIsLoading(false);
@@ -151,24 +151,24 @@ const ProductListPage = () => {
               ))}
             </div>
 
-            {meta && meta.totalPages > 1 && (
+            {pagination && pagination.totalPages > 1 && (
               <div className="mt-8 flex items-center justify-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={meta.page <= 1}
-                  onClick={() => goToPage(meta.page - 1)}
+                  disabled={pagination.page <= 1}
+                  onClick={() => goToPage(pagination.page - 1)}
                 >
                   Previous
                 </Button>
                 <span className="text-sm text-gray-500">
-                  Page {meta.page} of {meta.totalPages}
+                  Page {pagination.page} of {pagination.totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={meta.page >= meta.totalPages}
-                  onClick={() => goToPage(meta.page + 1)}
+                  disabled={pagination.page >= pagination.totalPages}
+                  onClick={() => goToPage(pagination.page + 1)}
                 >
                   Next
                 </Button>
