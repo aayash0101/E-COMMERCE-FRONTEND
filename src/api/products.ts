@@ -15,7 +15,7 @@ export interface ProductListParams {
 
 export interface ProductListResult {
   products: Product[];
-  meta: PaginationMeta;
+  pagination: PaginationMeta;
 }
 
 export interface ProductFormFields {
