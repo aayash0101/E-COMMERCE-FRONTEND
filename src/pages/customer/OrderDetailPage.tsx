@@ -109,7 +109,8 @@ const OrderDetailPage = () => {
                 {item.itemStatus}
               </span>
             </div>
-          ))}        </div>
+          ))}
+        </div>
 
         <div className="space-y-5">
           <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
@@ -156,6 +157,19 @@ const OrderDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {reviewTarget && (
+        <ReviewFormModal
+          open={Boolean(reviewTarget)}
+          onClose={() => setReviewTarget(null)}
+          onSubmitted={() => {
+            /* Could show a toast here; kept silent for now */
+          }}
+          productId={reviewTarget.productId}
+          productName={reviewTarget.productName}
+          orderId={order.id}
+        />
+      )}
     </div>
   );
 };
