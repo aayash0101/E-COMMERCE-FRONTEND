@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { productsApi } from "@/api/products";
-import type { Product } from "@/types";
+import { reviewsApi } from "@/api/reviews";
+import type { Product, Review } from "@/types";
 import { useAuth, useCart } from "@/hooks/useAuth";
 import { addToCart } from "@/features/cart/cartSlice";
 import { getImageUrl } from "@/utils/getImageUrl";
 import Spinner from "@/components/ui/Spinner";
 import Button from "@/components/ui/Button";
+import ReviewList from "@/components/product/ReviewList";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +22,15 @@ const ProductDetailPage = () => {
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [addedMessage, setAddedMessage] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  const loadReviews = () => {
+    if (!id) return;
+    reviewsApi
+      .getProductReviews(id)
+      .then(setReviews)
+      .catch(() => setReviews([]));
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -34,6 +45,8 @@ const ProductDetailPage = () => {
       .finally(() => {
         if (active) setIsLoading(false);
       });
+
+    loadReviews();
 
     return () => {
       active = false;
@@ -171,6 +184,16 @@ const ProductDetailPage = () => {
               </Button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Reviews */}
+      <div className="mt-16 max-w-3xl">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
+          Reviews {product.reviewCount > 0 && `(${product.reviewCount})`}
+        </h2>
+        <div className="mt-6">
+          <ReviewList reviews={reviews} onChanged={loadReviews} />
         </div>
       </div>
     </div>
