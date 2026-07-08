@@ -4,6 +4,7 @@ import { ordersApi } from "@/api/orders";
 import type { Order } from "@/types";
 import { getImageUrl } from "@/utils/getImageUrl";
 import Spinner from "@/components/ui/Spinner";
+import ReviewFormModal from "@/components/product/ReviewFormModal";
 
 const itemStatusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
@@ -17,6 +18,10 @@ const OrderDetailPage = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<{
+    productId: string;
+    productName: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -84,6 +89,19 @@ const OrderDetailPage = () => {
                 <p className="mt-0.5 text-xs text-gray-500">
                   Qty {item.quantity} · ${item.price.toFixed(2)} each
                 </p>
+                {item.itemStatus === "delivered" && (
+                  <button
+                    onClick={() =>
+                      setReviewTarget({
+                        productId: item.productId.id,
+                        productName: item.name,
+                      })
+                    }
+                    className="mt-1.5 text-xs font-medium text-primary-600 hover:text-primary-700"
+                  >
+                    Write a review
+                  </button>
+                )}
               </div>
               <span
                 className={`rounded-full px-2.5 py-1 text-xs font-medium ${itemStatusColors[item.itemStatus]}`}
@@ -91,8 +109,7 @@ const OrderDetailPage = () => {
                 {item.itemStatus}
               </span>
             </div>
-          ))}
-        </div>
+          ))}        </div>
 
         <div className="space-y-5">
           <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
