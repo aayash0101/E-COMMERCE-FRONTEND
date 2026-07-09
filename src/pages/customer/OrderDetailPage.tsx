@@ -4,7 +4,9 @@ import { ordersApi } from "@/api/orders";
 import type { Order } from "@/types";
 import { getImageUrl } from "@/utils/getImageUrl";
 import Spinner from "@/components/ui/Spinner";
+import Button from "@/components/ui/Button";
 import ReviewFormModal from "@/components/product/ReviewFormModal";
+import CancelOrderModal from "@/components/product/CancelOrderModal";
 
 const itemStatusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
@@ -22,8 +24,9 @@ const OrderDetailPage = () => {
     productId: string;
     productName: string;
   } | null>(null);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
-  useEffect(() => {
+  const loadOrder = () => {
     if (!id) return;
     ordersApi
       .getOrderById(id)
@@ -39,6 +42,11 @@ const OrderDetailPage = () => {
         }
       })
       .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    loadOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (isLoading) {
@@ -57,14 +65,38 @@ const OrderDetailPage = () => {
     );
   }
 
+  const canCancel = order.items.every((item) => item.itemStatus === "pending");
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
-        Order #{order.id.slice(-8).toUpperCase()}
-      </h1>
-      <p className="mt-1 text-sm text-gray-500">
-        Placed on {new Date(order.createdAt).toLocaleDateString()}
-      </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+            Order #{order.id.slice(-8).toUpperCase()}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Placed on {new Date(order.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+        {canCancel && (
+          <Button variant="outline" onClick={() => setCancelModalOpen(true)}>
+            Cancel Order
+          </Button>
+        )}
+      </div>
+
+      {order.cancellationReason && (
+        <div className="mt-4 rounded-2xl border border-red-100 bg-red-50 p-4">
+          <p className="text-sm font-medium text-red-700">
+            This order was cancelled
+            {order.cancelledAt &&
+              ` on ${new Date(order.cancelledAt).toLocaleDateString()}`}
+          </p>
+          <p className="mt-1 text-sm text-red-600">
+            Reason: {order.cancellationReason}
+          </p>
+        </div>
+      )}
 
       <div className="mt-6 grid gap-8 lg:grid-cols-3">
         <div className="space-y-3 lg:col-span-2">
@@ -170,6 +202,13 @@ const OrderDetailPage = () => {
           orderId={order.id}
         />
       )}
+
+      <CancelOrderModal
+        open={cancelModalOpen}
+        onClose={() => setCancelModalOpen(false)}
+        onCancelled={loadOrder}
+        orderId={order.id}
+      />
     </div>
   );
 };
