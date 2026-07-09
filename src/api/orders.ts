@@ -26,6 +26,13 @@ export const ordersApi = {
     );
     return response.data.data.order;
   },
+  cancelOrder: async (orderId: string, reason: string): Promise<Order> => {
+    const response = await api.put<ApiResponse<{ order: Order }>>(
+      `/orders/${orderId}/cancel`,
+      { reason }
+    );
+    return response.data.data.order;
+  },
   getVendorOrders: async (): Promise<Order[]> => {
     const response = await api.get<ApiResponse<{ orders: Order[] }>>(
       "/orders/vendor/mine"
@@ -44,4 +51,3 @@ export const ordersApi = {
     return response.data.data.order;
   },
 };
-
