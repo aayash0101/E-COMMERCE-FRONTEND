@@ -95,6 +95,8 @@ export interface Order {
   totalAmount: number;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentMethod: string;
+  cancellationReason?: string;
+  cancelledAt?: string;
   createdAt: string;
   updatedAt: string;
 }
