@@ -1,70 +1,53 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { productsApi } from "@/api/products";
-import { reviewsApi } from "@/api/reviews";
-import type { Product, Review } from "@/types";
-import { useAuth, useCart } from "@/hooks/useAuth";
-import { addToCart } from "@/features/cart/cartSlice";
+import { useParams } from "react-router-dom";
+import { ordersApi } from "@/api/orders";
+import type { Order } from "@/types";
 import { getImageUrl } from "@/utils/getImageUrl";
 import Spinner from "@/components/ui/Spinner";
 import Button from "@/components/ui/Button";
-import ReviewList from "@/components/product/ReviewList";
+import ReviewFormModal from "@/components/product/ReviewFormModal";
+import CancelOrderModal from "@/components/product/CancelOrderModal";
 
-const ProductDetailPage = () => {
+const itemStatusColors: Record<string, string> = {
+  pending: "bg-amber-100 text-amber-700",
+  shipped: "bg-blue-100 text-blue-700",
+  delivered: "bg-green-100 text-green-700",
+  cancelled: "bg-red-100 text-red-700",
+};
+
+const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user, isAuthenticated } = useAuth();
-  const { dispatch: cartDispatch, isLoading: cartLoading } = useCart();
-
-  const [product, setProduct] = useState<Product | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeImage, setActiveImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [addedMessage, setAddedMessage] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [reviewTarget, setReviewTarget] = useState<{
+    productId: string;
+    productName: string;
+  } | null>(null);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
-  const loadReviews = () => {
+  const loadOrder = () => {
     if (!id) return;
-    reviewsApi
-      .getProductReviews(id)
-      .then(setReviews)
-      .catch(() => setReviews([]));
+    ordersApi
+      .getOrderById(id)
+      .then(setOrder)
+      .catch((err: unknown) => {
+        const e = err as { response?: { status?: number; data?: { message?: string } } };
+        if (e.response?.status === 403) {
+          setErrorMessage("You don't have access to this order.");
+        } else if (e.response?.status === 404) {
+          setErrorMessage("Order not found.");
+        } else {
+          setErrorMessage(e.response?.data?.message ?? "Failed to load order.");
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
-    if (!id) return;
-    let active = true;
-    setIsLoading(true);
-
-    productsApi
-      .getById(id)
-      .then((data) => {
-        if (active) setProduct(data);
-      })
-      .finally(() => {
-        if (active) setIsLoading(false);
-      });
-
-    loadReviews();
-
-    return () => {
-      active = false;
-    };
+    loadOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  const handleAddToCart = async () => {
-    if (!product) return;
-
-    if (!isAuthenticated) {
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
-
-    await cartDispatch(addToCart({ productId: product.id, quantity }));
-    setAddedMessage(true);
-    setTimeout(() => setAddedMessage(false), 2000);
-  };
 
   if (isLoading) {
     return (
@@ -74,130 +57,160 @@ const ProductDetailPage = () => {
     );
   }
 
-  if (!product) {
+  if (errorMessage || !order) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 lg:px-8">
-        <p className="text-sm text-gray-500">Product not found.</p>
+      <div className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
+        <p className="text-sm text-gray-500">{errorMessage ?? "Order not found."}</p>
       </div>
     );
   }
 
-  const canAddToCart = !user || user.role === "customer";
+  const canCancel = order.items.every((item) => item.itemStatus === "pending");
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-2">
-        {/* Gallery */}
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex items-start justify-between">
         <div>
-          <div className="aspect-square overflow-hidden rounded-2xl bg-gray-50">
-            {product.images[activeImage] ? (
-              <img
-                src={getImageUrl(product.images[activeImage])}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-gray-300">
-                No image
-              </div>
-            )}
-          </div>
-          {product.images.length > 1 && (
-            <div className="mt-3 flex gap-2">
-              {product.images.map((img, i) => (
-                <button
-                  key={img}
-                  onClick={() => setActiveImage(i)}
-                  className={`h-16 w-16 overflow-hidden rounded-lg border-2 ${
-                    activeImage === i ? "border-primary-600" : "border-transparent"
-                  }`}
-                >
+          <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
+            Order #{order.id.slice(-8).toUpperCase()}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Placed on {new Date(order.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+        {canCancel && (
+          <Button variant="outline" onClick={() => setCancelModalOpen(true)}>
+            Cancel Order
+          </Button>
+        )}
+      </div>
+
+      {order.cancellationReason && (
+        <div className="mt-4 rounded-2xl border border-red-100 bg-red-50 p-4">
+          <p className="text-sm font-medium text-red-700">
+            This order was cancelled
+            {order.cancelledAt &&
+              ` on ${new Date(order.cancelledAt).toLocaleDateString()}`}
+          </p>
+          <p className="mt-1 text-sm text-red-600">
+            Reason: {order.cancellationReason}
+          </p>
+        </div>
+      )}
+
+      <div className="mt-6 grid gap-8 lg:grid-cols-3">
+        <div className="space-y-3 lg:col-span-2">
+          {order.items.map((item) => (
+            <div
+              key={item._id}
+              className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4"
+            >
+              <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                {item.productId?.images?.[0] && (
                   <img
-                    src={getImageUrl(img)}
-                    alt=""
+                    src={getImageUrl(item.productId.images[0])}
+                    alt={item.name}
                     className="h-full w-full object-cover"
                   />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Details */}
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-            {product.categoryId?.name}
-          </p>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-ink">
-            {product.name}
-          </h1>
-
-          {product.reviewCount > 0 && (
-            <div className="mt-2 flex items-center gap-1.5 text-sm text-gray-500">
-              <svg className="h-4 w-4 fill-amber-400" viewBox="0 0 20 20">
-                <path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z" />
-              </svg>
-              {product.averageRating.toFixed(1)} ({product.reviewCount} reviews)
-            </div>
-          )}
-
-          <p className="mt-4 font-display text-4xl font-bold tracking-tight text-ink">
-            ${product.price.toFixed(2)}
-          </p>
-
-          <p className="mt-4 text-sm leading-relaxed text-gray-600">
-            {product.description}
-          </p>
-
-          <p className="mt-4 text-sm text-gray-500">
-            {product.stock > 0
-              ? `${product.stock} in stock`
-              : "Out of stock"}
-          </p>
-
-          {canAddToCart && (
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center rounded-full border border-gray-200">
-                <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="px-3 py-2 text-gray-600 hover:bg-gray-50"
-                >
-                  −
-                </button>
-                <span className="w-10 text-center text-sm">{quantity}</span>
-                <button
-                  onClick={() =>
-                    setQuantity((q) => Math.min(product.stock, q + 1))
-                  }
-                  className="px-3 py-2 text-gray-600 hover:bg-gray-50"
-                >
-                  +
-                </button>
+                )}
               </div>
-
-              <Button
-                onClick={handleAddToCart}
-                isLoading={cartLoading}
-                disabled={product.stock === 0}
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">
+                  {item.name}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">
+                  Qty {item.quantity} · ${item.price.toFixed(2)} each
+                </p>
+                {item.itemStatus === "delivered" && (
+                  <button
+                    onClick={() =>
+                      setReviewTarget({
+                        productId: item.productId.id,
+                        productName: item.name,
+                      })
+                    }
+                    className="mt-1.5 text-xs font-medium text-primary-600 hover:text-primary-700"
+                  >
+                    Write a review
+                  </button>
+                )}
+              </div>
+              <span
+                className={`rounded-full px-2.5 py-1 text-xs font-medium ${itemStatusColors[item.itemStatus]}`}
               >
-                {addedMessage ? "Added!" : "Add to Cart"}
-              </Button>
+                {item.itemStatus}
+              </span>
             </div>
-          )}
+          ))}
+        </div>
+
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              Shipping Address
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              {order.shippingAddress.fullName}
+              <br />
+              {order.shippingAddress.addressLine1}
+              {order.shippingAddress.addressLine2 && (
+                <>
+                  <br />
+                  {order.shippingAddress.addressLine2}
+                </>
+              )}
+              <br />
+              {order.shippingAddress.city}, {order.shippingAddress.postalCode}
+              <br />
+              {order.shippingAddress.country}
+              <br />
+              {order.shippingAddress.phone}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-gray-100 bg-gray-50/50 p-6">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              Payment
+            </h2>
+            <div className="mt-2 flex justify-between text-sm text-gray-600">
+              <span>Method</span>
+              <span className="capitalize">
+                {order.paymentMethod.replace(/_/g, " ")}
+              </span>
+            </div>
+            <div className="mt-1 flex justify-between text-sm text-gray-600">
+              <span>Status</span>
+              <span className="capitalize">{order.paymentStatus}</span>
+            </div>
+            <div className="mt-3 flex justify-between border-t border-gray-200 pt-3 text-base font-semibold text-gray-900">
+              <span>Total</span>
+              <span>${order.totalAmount.toFixed(2)}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Reviews */}
-      <div className="mt-16 max-w-3xl">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
-          Reviews {product.reviewCount > 0 && `(${product.reviewCount})`}
-        </h2>
-        <div className="mt-6">
-          <ReviewList reviews={reviews} onChanged={loadReviews} />
-        </div>
-      </div>
+      {reviewTarget && (
+        <ReviewFormModal
+          open={Boolean(reviewTarget)}
+          onClose={() => setReviewTarget(null)}
+          onSubmitted={() => {
+            /* Could show a toast here; kept silent for now */
+          }}
+          productId={reviewTarget.productId}
+          productName={reviewTarget.productName}
+          orderId={order.id}
+        />
+      )}
+
+      <CancelOrderModal
+        open={cancelModalOpen}
+        onClose={() => setCancelModalOpen(false)}
+        onCancelled={loadOrder}
+        orderId={order.id}
+      />
     </div>
   );
 };
 
-export default ProductDetailPage;
+export default OrderDetailPage;
