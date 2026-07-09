@@ -59,7 +59,7 @@ const ProductListPage = () => {
 
   const goToPage = (nextPage: number) => {
     const next = new URLSearchParams(searchParams);
-    next.set("page", String(nextPage));
+    next.set("page", String(Number(nextPage)));
     setSearchParams(next);
   };
 
@@ -157,7 +157,7 @@ const ProductListPage = () => {
                   variant="outline"
                   size="sm"
                   disabled={pagination.page <= 1}
-                  onClick={() => goToPage(pagination.page - 1)}
+                  onClick={() => goToPage(Number(pagination.page) - 1)}
                 >
                   Previous
                 </Button>
@@ -168,7 +168,7 @@ const ProductListPage = () => {
                   variant="outline"
                   size="sm"
                   disabled={pagination.page >= pagination.totalPages}
-                  onClick={() => goToPage(pagination.page + 1)}
+                  onClick={() => goToPage(Number(pagination.page) + 1)}
                 >
                   Next
                 </Button>
