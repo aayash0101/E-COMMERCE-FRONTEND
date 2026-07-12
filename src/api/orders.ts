@@ -8,6 +8,25 @@ export interface PlaceOrderPayload {
   paymentMethod: PaymentMethod;
 }
 
+export interface EsewaFormFields {
+  amount: string;
+  tax_amount: string;
+  total_amount: string;
+  transaction_uuid: string;
+  product_code: string;
+  product_service_charge: string;
+  product_delivery_charge: string;
+  success_url: string;
+  failure_url: string;
+  signed_field_names: string;
+  signature: string;
+}
+
+export interface EsewaInitiateResult {
+  paymentUrl: string;
+  fields: EsewaFormFields;
+}
+
 export const ordersApi = {
   placeOrder: async (payload: PlaceOrderPayload): Promise<Order> => {
     const response = await api.post<ApiResponse<{ order: Order }>>(
@@ -30,6 +49,19 @@ export const ordersApi = {
     const response = await api.put<ApiResponse<{ order: Order }>>(
       `/orders/${orderId}/cancel`,
       { reason }
+    );
+    return response.data.data.order;
+  },
+  initiateEsewaPayment: async (orderId: string): Promise<EsewaInitiateResult> => {
+    const response = await api.post<ApiResponse<EsewaInitiateResult>>(
+      `/orders/${orderId}/esewa/initiate`
+    );
+    return response.data.data;
+  },
+  verifyEsewaPayment: async (data: string): Promise<Order> => {
+    const response = await api.post<ApiResponse<{ order: Order }>>(
+      "/orders/esewa/verify",
+      { data }
     );
     return response.data.data.order;
   },
