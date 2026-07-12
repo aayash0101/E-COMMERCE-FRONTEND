@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { productsApi, type ProductSortBy } from "@/api/products";
+import { categoriesApi, type CategoryOption } from "@/api/categories";
 import type { Product } from "@/types";
 import type { PaginationMeta } from "@/types";
 import ProductCard from "@/components/product/ProductCard";
@@ -13,8 +14,10 @@ const ProductListPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
 
   const search = searchParams.get("search") ?? "";
+  const categoryId = searchParams.get("categoryId") ?? "";
   const minPrice = searchParams.get("minPrice") ?? "";
   const maxPrice = searchParams.get("maxPrice") ?? "";
   const sortBy = (searchParams.get("sortBy") as ProductSortBy) ?? "-createdAt";
@@ -23,12 +26,17 @@ const ProductListPage = () => {
   const [searchInput, setSearchInput] = useState(search);
 
   useEffect(() => {
+    categoriesApi.list().then(setCategories).catch(() => setCategories([]));
+  }, []);
+
+  useEffect(() => {
     let active = true;
     setIsLoading(true);
 
     productsApi
       .list({
         search: search || undefined,
+        categoryId: categoryId || undefined,
         minPrice: minPrice ? Number(minPrice) : undefined,
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
         sortBy,
@@ -47,7 +55,7 @@ const ProductListPage = () => {
     return () => {
       active = false;
     };
-  }, [search, minPrice, maxPrice, sortBy, page]);
+  }, [search, categoryId, minPrice, maxPrice, sortBy, page]);
 
   const updateParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -89,6 +97,24 @@ const ProductListPage = () => {
             className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-ink/10"
           />
         </form>
+
+        <div className="w-48">
+          <label className="mb-1.5 block text-xs font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            value={categoryId}
+            onChange={(e) => updateParam("categoryId", e.target.value)}
+            className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-ink/10"
+          >
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="w-28">
           <label className="mb-1.5 block text-xs font-medium text-gray-700">
