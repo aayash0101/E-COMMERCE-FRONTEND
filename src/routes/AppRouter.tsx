@@ -12,6 +12,8 @@ import CartPage from '@/pages/customer/CartPage';
 import CheckoutPage from '@/pages/customer/CheckoutPage';
 import OrderHistoryPage from '@/pages/customer/OrderHistoryPage';
 import OrderDetailPage from '@/pages/customer/OrderDetailPage';
+import EsewaCallbackPage from '@/pages/customer/EsewaCallbackPage';
+import EsewaFailurePage from '@/pages/customer/EsewaFailurePage';
 // Vendor pages
 import VendorDashboardPage from '@/pages/vendor/VendorDashboardPage';
 import VendorProductsPage from '@/pages/vendor/VendorProductsPage';
@@ -46,6 +48,8 @@ export default function AppRouter() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/orders" element={<OrderHistoryPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
+          <Route path="/payment/esewa/callback" element={<EsewaCallbackPage />} />
+          <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
         </Route>
 
         {/* Vendor protected routes */}
