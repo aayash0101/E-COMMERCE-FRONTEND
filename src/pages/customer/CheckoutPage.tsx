@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useAuth";
 import { fetchCart, clearCartState } from "@/features/cart/cartSlice";
 import { ordersApi, type PaymentMethod } from "@/api/orders";
+import { redirectToEsewa } from "@/utils/esewaRedirect";
 import type { ShippingAddress } from "@/types";
 import Spinner from "@/components/ui/Spinner";
 import Button from "@/components/ui/Button";
@@ -66,11 +67,19 @@ const CheckoutPage = () => {
         paymentMethod,
       });
       dispatch(clearCartState());
+
+      if (paymentMethod === "esewa") {
+        const { paymentUrl, fields } = await ordersApi.initiateEsewaPayment(
+          order.id
+        );
+        redirectToEsewa(paymentUrl, fields);
+        return; // browser is navigating away; nothing else to do here
+      }
+
       navigate(`/orders/${order.id}`, { replace: true });
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
       setError(e.response?.data?.message ?? "Failed to place order.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -171,7 +180,7 @@ const CheckoutPage = () => {
           )}
 
           <Button type="submit" fullWidth isLoading={isSubmitting}>
-            Place Order
+            {paymentMethod === "esewa" ? "Continue to eSewa" : "Place Order"}
           </Button>
         </form>
 
