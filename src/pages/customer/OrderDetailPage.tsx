@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ordersApi } from "@/api/orders";
 import type { Order } from "@/types";
 import { getImageUrl } from "@/utils/getImageUrl";
+import { redirectToEsewa } from "@/utils/esewaRedirect";
 import Spinner from "@/components/ui/Spinner";
 import Button from "@/components/ui/Button";
 import ReviewFormModal from "@/components/product/ReviewFormModal";
@@ -25,6 +26,7 @@ const OrderDetailPage = () => {
     productName: string;
   } | null>(null);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
 
   const loadOrder = () => {
     if (!id) return;
@@ -48,6 +50,17 @@ const OrderDetailPage = () => {
     loadOrder();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handlePayWithEsewa = async () => {
+    if (!order) return;
+    setIsPaying(true);
+    try {
+      const { paymentUrl, fields } = await ordersApi.initiateEsewaPayment(order.id);
+      redirectToEsewa(paymentUrl, fields);
+    } catch {
+      setIsPaying(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -78,11 +91,18 @@ const OrderDetailPage = () => {
             Placed on {new Date(order.createdAt).toLocaleDateString()}
           </p>
         </div>
-        {canCancel && (
-          <Button variant="outline" onClick={() => setCancelModalOpen(true)}>
-            Cancel Order
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {order.paymentMethod === "esewa" && order.paymentStatus === "pending" && (
+            <Button onClick={handlePayWithEsewa} isLoading={isPaying}>
+              Pay with eSewa
+            </Button>
+          )}
+          {canCancel && (
+            <Button variant="outline" onClick={() => setCancelModalOpen(true)}>
+              Cancel Order
+            </Button>
+          )}
+        </div>
       </div>
 
       {order.cancellationReason && (
