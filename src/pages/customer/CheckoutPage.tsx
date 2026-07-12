@@ -66,16 +66,16 @@ const CheckoutPage = () => {
         shippingAddress: address,
         paymentMethod,
       });
-      dispatch(clearCartState());
 
       if (paymentMethod === "esewa") {
         const { paymentUrl, fields } = await ordersApi.initiateEsewaPayment(
           order.id
         );
         redirectToEsewa(paymentUrl, fields);
-        return; // browser is navigating away; nothing else to do here
+        return; // browser is navigating away to eSewa; don't touch cart/router state
       }
 
+      dispatch(clearCartState());
       navigate(`/orders/${order.id}`, { replace: true });
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
@@ -83,7 +83,6 @@ const CheckoutPage = () => {
       setIsSubmitting(false);
     }
   };
-
   if (isLoading && !cart) {
     return (
       <div className="flex justify-center py-24">
