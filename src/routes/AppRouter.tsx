@@ -36,6 +36,8 @@ export default function AppRouter() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/payment/esewa/callback" element={<EsewaCallbackPage />} />
+        <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
 
         {/* Any authenticated user (customer or vendor-to-be) */}
         <Route element={<ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']} />}>
@@ -48,8 +50,6 @@ export default function AppRouter() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/orders" element={<OrderHistoryPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
-          <Route path="/payment/esewa/callback" element={<EsewaCallbackPage />} />
-          <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
         </Route>
 
         {/* Vendor protected routes */}
