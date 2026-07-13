@@ -1,12 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Layout from '@/components/layout/Layout';
+import AdminLayout from '@/components/layout/adminLayout';
+
 // Public pages
 import HomePage from '@/pages/customer/HomePage';
 import ProductListPage from '@/pages/customer/ProductListPage';
 import ProductDetailPage from '@/pages/customer/ProductDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
+
 // Customer pages
 import CartPage from '@/pages/customer/CartPage';
 import CheckoutPage from '@/pages/customer/CheckoutPage';
@@ -15,11 +18,13 @@ import OrderDetailPage from '@/pages/customer/OrderDetailPage';
 import EsewaCallbackPage from '@/pages/customer/EsewaCallbackPage';
 import EsewaFailurePage from '@/pages/customer/EsewaFailurePage';
 import KhaltiCallbackPage from '@/pages/customer/KhaltiCallbackPage';
+
 // Vendor pages
 import VendorDashboardPage from '@/pages/vendor/VendorDashboardPage';
 import VendorProductsPage from '@/pages/vendor/VendorProductsPage';
 import VendorOrdersPage from '@/pages/vendor/VendorOrdersPage';
 import VendorApplyPage from '@/pages/vendor/VendorApplyPage';
+
 // Admin pages
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import AdminUsersPage from '@/pages/admin/AdminUsersPage';
@@ -30,8 +35,10 @@ import AdminVendorsPage from '@/pages/admin/AdminVendorsPage';
 export default function AppRouter() {
   return (
     <Routes>
+
+      {/* ── Main layout (Navbar + Footer) ────────────────────────── */}
       <Route element={<Layout />}>
-        {/* Public routes */}
+        {/* Public */}
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
@@ -46,7 +53,7 @@ export default function AppRouter() {
           <Route path="/vendor/apply" element={<VendorApplyPage />} />
         </Route>
 
-        {/* Customer protected routes */}
+        {/* Customer */}
         <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
@@ -54,20 +61,11 @@ export default function AppRouter() {
           <Route path="/orders/:id" element={<OrderDetailPage />} />
         </Route>
 
-        {/* Vendor protected routes */}
+        {/* Vendor */}
         <Route element={<ProtectedRoute allowedRoles={['vendor']} />}>
           <Route path="/vendor/dashboard" element={<VendorDashboardPage />} />
           <Route path="/vendor/products" element={<VendorProductsPage />} />
           <Route path="/vendor/orders" element={<VendorOrdersPage />} />
-        </Route>
-
-        {/* Admin protected routes */}
-        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/users" element={<AdminUsersPage />} />
-          <Route path="/admin/products" element={<AdminProductsPage />} />
-          <Route path="/admin/orders" element={<AdminOrdersPage />} />
-          <Route path="/admin/vendors" element={<AdminVendorsPage />} />
         </Route>
 
         <Route
@@ -81,8 +79,20 @@ export default function AppRouter() {
             </div>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
+
+      {/* ── Admin layout (Sidebar, no Footer) ────────────────────── */}
+      <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/products" element={<AdminProductsPage />} />
+          <Route path="/admin/orders" element={<AdminOrdersPage />} />
+          <Route path="/admin/vendors" element={<AdminVendorsPage />} />
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
