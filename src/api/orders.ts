@@ -27,6 +27,11 @@ export interface EsewaInitiateResult {
   fields: EsewaFormFields;
 }
 
+export interface KhaltiInitiateResult {
+  pidx: string;
+  paymentUrl: string;
+}
+
 export const ordersApi = {
   placeOrder: async (payload: PlaceOrderPayload): Promise<Order> => {
     const response = await api.post<ApiResponse<{ order: Order }>>(
@@ -35,16 +40,21 @@ export const ordersApi = {
     );
     return response.data.data.order;
   },
+
   getMyOrders: async (): Promise<Order[]> => {
-    const response = await api.get<ApiResponse<{ orders: Order[] }>>("/orders");
+    const response = await api.get<ApiResponse<{ orders: Order[] }>>(
+      "/orders"
+    );
     return response.data.data.orders;
   },
+
   getOrderById: async (id: string): Promise<Order> => {
     const response = await api.get<ApiResponse<{ order: Order }>>(
       `/orders/${id}`
     );
     return response.data.data.order;
   },
+
   cancelOrder: async (orderId: string, reason: string): Promise<Order> => {
     const response = await api.put<ApiResponse<{ order: Order }>>(
       `/orders/${orderId}/cancel`,
@@ -52,12 +62,17 @@ export const ordersApi = {
     );
     return response.data.data.order;
   },
-  initiateEsewaPayment: async (orderId: string): Promise<EsewaInitiateResult> => {
+
+  // ─── eSewa ──────────────────────────────────────────────────────────
+  initiateEsewaPayment: async (
+    orderId: string
+  ): Promise<EsewaInitiateResult> => {
     const response = await api.post<ApiResponse<EsewaInitiateResult>>(
       `/orders/${orderId}/esewa/initiate`
     );
     return response.data.data;
   },
+
   verifyEsewaPayment: async (data: string): Promise<Order> => {
     const response = await api.post<ApiResponse<{ order: Order }>>(
       "/orders/esewa/verify",
@@ -65,12 +80,33 @@ export const ordersApi = {
     );
     return response.data.data.order;
   },
+
+  // ─── Khalti ─────────────────────────────────────────────────────────
+  initiateKhaltiPayment: async (
+    orderId: string
+  ): Promise<KhaltiInitiateResult> => {
+    const response = await api.post<ApiResponse<KhaltiInitiateResult>>(
+      `/orders/${orderId}/khalti/initiate`
+    );
+    return response.data.data;
+  },
+
+  verifyKhaltiPayment: async (pidx: string): Promise<Order> => {
+    const response = await api.post<ApiResponse<{ order: Order }>>(
+      "/orders/khalti/verify",
+      { pidx }
+    );
+    return response.data.data.order;
+  },
+
+  // ─── Vendor & shared ────────────────────────────────────────────────
   getVendorOrders: async (): Promise<Order[]> => {
     const response = await api.get<ApiResponse<{ orders: Order[] }>>(
       "/orders/vendor/mine"
     );
     return response.data.data.orders;
   },
+
   updateItemStatus: async (
     orderId: string,
     itemId: string,
