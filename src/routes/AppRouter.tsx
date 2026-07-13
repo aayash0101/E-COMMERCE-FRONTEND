@@ -14,6 +14,7 @@ import OrderHistoryPage from '@/pages/customer/OrderHistoryPage';
 import OrderDetailPage from '@/pages/customer/OrderDetailPage';
 import EsewaCallbackPage from '@/pages/customer/EsewaCallbackPage';
 import EsewaFailurePage from '@/pages/customer/EsewaFailurePage';
+import KhaltiCallbackPage from '@/pages/customer/KhaltiCallbackPage';
 // Vendor pages
 import VendorDashboardPage from '@/pages/vendor/VendorDashboardPage';
 import VendorProductsPage from '@/pages/vendor/VendorProductsPage';
@@ -38,8 +39,9 @@ export default function AppRouter() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/payment/esewa/callback" element={<EsewaCallbackPage />} />
         <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
+        <Route path="/payment/khalti/callback" element={<KhaltiCallbackPage />} />
 
-        {/* Any authenticated user (customer or vendor-to-be) */}
+        {/* Any authenticated user */}
         <Route element={<ProtectedRoute allowedRoles={['customer', 'vendor', 'admin']} />}>
           <Route path="/vendor/apply" element={<VendorApplyPage />} />
         </Route>

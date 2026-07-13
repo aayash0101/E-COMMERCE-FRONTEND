@@ -72,7 +72,14 @@ const CheckoutPage = () => {
           order.id
         );
         redirectToEsewa(paymentUrl, fields);
-        return; // browser is navigating away to eSewa; don't touch cart/router state
+        return;
+      }
+
+      if (paymentMethod === "khalti") {
+        const { paymentUrl } = await ordersApi.initiateKhaltiPayment(order.id);
+        // Khalti uses a simple GET redirect, not a POST form like eSewa
+        window.location.href = paymentUrl;
+        return;
       }
 
       dispatch(clearCartState());
@@ -83,6 +90,7 @@ const CheckoutPage = () => {
       setIsSubmitting(false);
     }
   };
+
   if (isLoading && !cart) {
     return (
       <div className="flex justify-center py-24">
@@ -179,7 +187,11 @@ const CheckoutPage = () => {
           )}
 
           <Button type="submit" fullWidth isLoading={isSubmitting}>
-            {paymentMethod === "esewa" ? "Continue to eSewa" : "Place Order"}
+            {paymentMethod === "esewa"
+              ? "Continue to eSewa"
+              : paymentMethod === "khalti"
+                ? "Continue to Khalti"
+                : "Place Order"}
           </Button>
         </form>
 
