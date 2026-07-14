@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Layout from '@/components/layout/Layout';
 import AdminLayout from '@/components/layout/AdminLayout';
+import SupportPage from '@/pages/customer/SupportPage';
+import AdminSupportPage from '@/pages/admin/AdminSupportPage';
 
 // Public pages
 import HomePage from '@/pages/customer/HomePage';
@@ -59,6 +61,7 @@ export default function AppRouter() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/orders" element={<OrderHistoryPage />} />
           <Route path="/orders/:id" element={<OrderDetailPage />} />
+          <Route path="/support" element={<SupportPage />} />
         </Route>
 
         {/* Vendor */}
@@ -89,6 +92,7 @@ export default function AppRouter() {
           <Route path="/admin/products" element={<AdminProductsPage />} />
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
           <Route path="/admin/vendors" element={<AdminVendorsPage />} />
+          <Route path="/admin/support" element={<AdminSupportPage />} />
         </Route>
       </Route>
 
