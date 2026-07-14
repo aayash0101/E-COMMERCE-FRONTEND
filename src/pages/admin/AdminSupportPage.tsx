@@ -10,7 +10,7 @@ import Button from "@/components/ui/Button";
 const QUICK_REPLIES = [
   "Thanks for your patience, we're looking into this now.",
   "Could you share your order number so we can look into it?",
-  "This has been resolved — let us know if anything else comes up!",
+  "This has been resolved - let us know if anything else comes up!",
   "We've forwarded this to the relevant vendor and will follow up soon.",
 ];
 
