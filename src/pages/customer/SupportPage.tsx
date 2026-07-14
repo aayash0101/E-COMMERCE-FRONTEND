@@ -59,7 +59,7 @@ const SupportPage = () => {
             </div>
           ) : messages.length === 0 ? (
             <p className="mt-12 text-center text-sm text-gray-500">
-              No messages yet — send one below to get started.
+              No messages yet - send one below to get started.
             </p>
           ) : (
             messages.map((msg) => {
