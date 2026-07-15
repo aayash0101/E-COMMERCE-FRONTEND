@@ -137,7 +137,7 @@ const LoginPage = () => {
           </h2>
           <p className="mt-4 text-gray-300">
             Buy from independent vendors, or sign in to manage your own
-            storefront — orders, inventory, and revenue, all in one place.
+            storefront orders, inventory, and revenue, all in one place.
           </p>
         </div>
       </div>
