@@ -96,7 +96,7 @@ const VendorDashboardPage = () => {
           <ul className="mt-2 space-y-1">
             {lowStockProducts.map((p) => (
               <li key={p.id} className="text-sm text-amber-700">
-                {p.name} — {p.stock} left
+                {p.name} - {p.stock} left
               </li>
             ))}
           </ul>
