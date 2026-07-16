@@ -33,7 +33,7 @@ const ReviewList = ({ reviews, onChanged }: ReviewListProps) => {
   if (reviews.length === 0) {
     return (
       <p className="text-sm text-gray-500">
-        No reviews yet - be the first to share your thoughts.
+        No reviews yet - Be the first to share your thoughts.
       </p>
     );
   }
